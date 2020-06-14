@@ -28,7 +28,7 @@ cd ssh-agent-relay
 sudo make install
 ```
 
-Now, open up ~/.bashrc or ~/.zshrc and add:
+Now, open up `~/.bashrc` or `~/.zshrc` and add:
 
 ```sh
 eval $(ssh-agent-relay)
