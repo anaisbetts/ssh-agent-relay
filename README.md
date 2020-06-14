@@ -24,14 +24,17 @@ First install the dependencies, `daemonize` and `socat`:
 
 ```sh
 yay -Sy daemonize socat
+
 ## or
+
 apt install daemonize socat
 ```
 
-In WSL2:
+Then, install it:
 
 ```sh
 git clone https://github.com/anaisbetts/ssh-agent-relay
+
 cd ssh-agent-relay
 sudo make install
 ```
