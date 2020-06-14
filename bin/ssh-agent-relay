@@ -1,13 +1,16 @@
 #!/bin/bash
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+PREFIX=$(realpath $DIR/..)
+
 if ! sc.exe query ssh-agent | grep 'RUNNING' > /dev/null; then
 	echo "The Windows OpenSSH Agent isn't running, start it via 'net start ssh-agent'" >&2
 	exit 1
 fi
 
 if ! which npiperelay.exe > /dev/null ; then
-	echo "npiperelay.exe isn't in PATH, copy it there!" >&2
-	exit 1
+	WINUSER=$(cmd.exe /C "echo %USERNAME%" 2>/dev/null)
+	cp $PREFIX/lib/ssh-agent-relay/npiperelay.exe "/mnt/$WINUSER/AppData/Local/Microsoft/WindowsApps"
 fi
 
 daemonize -p /tmp/ssh-relay.pid -l /tmp/ssh-relay.lock -- \
