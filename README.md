@@ -20,6 +20,14 @@ ssh-add     ## Here's where you put in your password, once
 
 ## To install
 
+First install the dependencies, `daemonize` and `socat`:
+
+```sh
+yay -Sy daemonize socat
+## or
+apt install daemonize socat
+```
+
 In WSL2:
 
 ```sh
