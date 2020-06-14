@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if ! sc.exe query ssh-agent | grep 'RUNNING' > /dev/null; then
+	echo "The Windows OpenSSH Agent isn't running, start it via 'net start ssh-agent'" >&2
+	exit 1
+fi
+
+if ! which npiperelay.exe > /dev/null ; then
+	echo "npiperelay.exe isn't in PATH, copy it there!" >&2
+	exit 1
+fi
+
+daemonize -p /tmp/ssh-relay.pid -l /tmp/ssh-relay.lock -- \
+	/bin/socat UNIX-LISTEN:/tmp/ssh-relay-agent,fork,umask=007 EXEC:"npiperelay.exe -s -ep //./pipe/openssh-ssh-agent",nofork \
+	> /dev/null 2>&1
+
+AUTH_PID=$(cat /tmp/ssh-relay.pid)
+
+echo "export SSH_AUTH_PID=$AUTH_PID"
+echo "export SSH_AUTH_SOCK=/tmp/ssh-relay-agent"
