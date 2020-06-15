@@ -3,15 +3,34 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 PREFIX=$(realpath "$DIR/..")
 
+# Check to make sure we've set up ssh-agent
 if ! sc.exe query ssh-agent | grep 'RUNNING' > /dev/null; then
 	echo "The Windows OpenSSH Agent isn't running, start it via 'net start ssh-agent'" >&2
 	exit 1
 fi
 
+# If npiperelay.exe isn't installed, drop it into a place that's in $PATH
+# by default on Win32
 if ! which npiperelay.exe > /dev/null 2>&1 ; then
 	WINUSER=$(cmd.exe /C "echo %USERNAME%" 2>/dev/null)
 	WINUSER_CHOMPED=$(echo "$WINUSER" | sed -e 's/\r//g')
 	cp "$PREFIX/lib/ssh-agent-relay/npiperelay.exe" "/mnt/c/Users/$WINUSER_CHOMPED/AppData/Local/Microsoft/WindowsApps/"
+fi
+
+# NB: Despite our best efforts, daemonize and socat don't always shut down
+# cleanly. This is Unfortunate because while socat might get killed off,
+# npiperelay.exe and its connection to ssh-agent won't, resulting in dozens
+# of npiperelay.exe processes
+#
+# Instead, we'll detect to see if our pid is existing but dead, and just
+# killall the npiperelay.exes which will in-turn kill all the ssh-agents
+if [ -e /tmp/ssh-relay.pid ]; then
+	AUTH_PID=$(cat /tmp/ssh-relay.pid)
+
+	kill -0 $AUTH_PID 
+	if [ ! $? ]; then
+		taskkill.exe /F /IM npiperelay.exe
+	fi
 fi
 
 daemonize -p /tmp/ssh-relay.pid -l /tmp/ssh-relay.lock -- \
