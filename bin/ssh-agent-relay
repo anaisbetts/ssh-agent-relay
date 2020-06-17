@@ -27,9 +27,9 @@ fi
 if [ -e /tmp/ssh-relay.pid ]; then
 	AUTH_PID=$(cat /tmp/ssh-relay.pid)
 
-	kill -0 $AUTH_PID 
-	if [ ! $? ]; then
-		taskkill.exe /F /IM npiperelay.exe
+	if ! kill -0 "$AUTH_PID" > /dev/null 2>&1 ; then
+		taskkill.exe /F /IM npiperelay.exe > /dev/null 2>&1
+		rm -f /tmp/ssh-relay-agent /tmp/ssh-relay.lock
 	fi
 fi
 
