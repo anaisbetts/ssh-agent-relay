@@ -8,7 +8,7 @@ Via an **Elevated** PowerShell account:
 
 ```sh
 Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
-sc config ssh-agent start=auto
+sc.exe config ssh-agent start=auto
 net start ssh-agent
 ```
 
