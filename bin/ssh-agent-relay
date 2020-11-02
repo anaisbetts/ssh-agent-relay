@@ -33,8 +33,10 @@ if [ -e /tmp/ssh-relay.pid ]; then
 	fi
 fi
 
+SOCAT="$(which socat)"
+
 daemonize -p /tmp/ssh-relay.pid -l /tmp/ssh-relay.lock -- \
-	/bin/socat UNIX-LISTEN:/tmp/ssh-relay-agent,fork,umask=007 EXEC:"npiperelay.exe -s -ep //./pipe/openssh-ssh-agent",nofork \
+	"$SOCAT" UNIX-LISTEN:/tmp/ssh-relay-agent,fork,umask=007 EXEC:"npiperelay.exe -s -ep //./pipe/openssh-ssh-agent",nofork \
 	> /dev/null 2>&1
 
 AUTH_PID=$(cat /tmp/ssh-relay.pid)
