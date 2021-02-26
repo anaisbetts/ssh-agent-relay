@@ -30,8 +30,8 @@ if [ -e /tmp/ssh-relay.pid ]; then
 	AUTH_PID=$(cat /tmp/ssh-relay.pid)
 
 	if ! kill -0 "$AUTH_PID" > /dev/null 2>&1 ; then
-		taskkill.exe /F /IM npiperelay.exe > /dev/null 2>&1
-		rm -f /tmp/ssh-relay-agent /tmp/ssh-relay.lock
+		taskkill.exe /F /IM npiperelay.exe > /dev/null 2>&1 || true
+		rm -f /tmp/ssh-relay-agent /tmp/ssh-relay.lock || true
 	else
 		echo "export SSH_AUTH_PID=$AUTH_PID"
 		echo "export SSH_AUTH_SOCK=/tmp/ssh-relay-agent"
