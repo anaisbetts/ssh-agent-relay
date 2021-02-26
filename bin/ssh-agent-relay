@@ -24,22 +24,26 @@ fi
 #
 # Instead, we'll detect to see if our pid is existing but dead, and just
 # killall the npiperelay.exes which will in-turn kill all the ssh-agents
-if [ -e /tmp/ssh-relay.pid ]; then
-	AUTH_PID=$(cat /tmp/ssh-relay.pid)
+if [ -e /var/run/ssh-relay.pid ]; then
+	AUTH_PID=$(cat /var/run/ssh-relay.pid)
 
 	if ! kill -0 "$AUTH_PID" > /dev/null 2>&1 ; then
 		taskkill.exe /F /IM npiperelay.exe > /dev/null 2>&1
-		rm -f /tmp/ssh-relay-agent /tmp/ssh-relay.lock
+		rm -f /var/run/ssh-relay-agent /var/run/ssh-relay.lock
+	else
+		echo "export SSH_AUTH_PID=$AUTH_PID"
+		echo "export SSH_AUTH_SOCK=/var/run/ssh-relay-agent"
+		exit 0
 	fi
 fi
 
 SOCAT="$(which socat)"
 
-daemonize -p /tmp/ssh-relay.pid -l /tmp/ssh-relay.lock -- \
-	"$SOCAT" UNIX-LISTEN:/tmp/ssh-relay-agent,fork,umask=007 EXEC:"npiperelay.exe -s -ep //./pipe/openssh-ssh-agent",nofork \
+daemonize -p /var/run/ssh-relay.pid -l /var/run/ssh-relay.lock -- \
+	"$SOCAT" UNIX-LISTEN:/var/run/ssh-relay-agent,fork,umask=007 EXEC:"npiperelay.exe -s -ep //./pipe/openssh-ssh-agent",nofork \
 	> /dev/null 2>&1
 
-AUTH_PID=$(cat /tmp/ssh-relay.pid)
+AUTH_PID=$(cat /var/run/ssh-relay.pid)
 
 echo "export SSH_AUTH_PID=$AUTH_PID"
-echo "export SSH_AUTH_SOCK=/tmp/ssh-relay-agent"
+echo "export SSH_AUTH_SOCK=/var/run/ssh-relay-agent"
