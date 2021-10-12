@@ -44,3 +44,5 @@ Now, open up `~/.bashrc` or `~/.zshrc` and add:
 ```sh
 eval $(ssh-agent-relay)
 ```
+
+Copy your SSH keys from the Windows side over to `$HOME/.ssh` and you're all set
