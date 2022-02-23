@@ -2,6 +2,8 @@
 
 ## [Go Here Instead](https://github.com/arquivolta/wsl-use-windows-openssh/blob/main/README.md)
 
+This project has a bunch of known issues, especially in newer versions of Windows. The above project works perfectly, doesn't have to run any extra programs on your computer, and is generally More Betterer in basically every way
+
 # ssh-agent-relay - Use your Windows SSH Agent in WSL2
 
 This project sets up a relay for your SSH agent so that your WSL installation will use the SSH agent built into Windows. Did you know there's an SSH Agent built into Windows? What a world!
